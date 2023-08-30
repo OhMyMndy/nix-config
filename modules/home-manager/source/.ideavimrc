@@ -1,0 +1,173 @@
+" SEE https://www.cyberwizard.io/posts/the-ultimate-ideavim-setup/
+
+""" Map leader to space ---------------------
+let mapleader=" "
+
+""" Plugins  --------------------------------
+set quickscope
+Plugin 'preservim/nerdtree'
+"Plugin 'easymotion/vim-easymotion'
+Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-commentary'
+
+set which-key
+set notimeout
+set sneak
+
+
+"" -- Suggested options --
+" Show a few lines of context around the cursor. Note that this makes the
+" text scroll if you mouse-click near the start or end of the window.
+set scrolloff=5
+
+" Do incremental searching.
+set incsearch
+
+" Don't use Ex mode, use Q for formatting.
+map Q gq
+
+
+"" -- Map IDE actions to IdeaVim -- https://jb.gg/abva4t
+"" Map \r to the Reformat Code action
+"map \r <Action>(ReformatCode)
+
+"" Map <leader>d to start debug
+"map <leader>d <Action>(Debug)
+
+"" Map \b to toggle the breakpoint on the current line
+"map \b <Action>(ToggleLineBreakpoint)
+
+
+" Find more examples here: https://jb.gg/share-ideavimrc
+
+" options and mappings that are supported by both Vim and IdeaVim
+set nu
+set relativenumber
+set ignorecase
+set smartcase
+set incsearch
+"set hlsearch
+
+" Tab navigation
+nnoremap <A-n> :tabnext<CR>
+nnoremap <A-p> :tabprev<CR>
+
+" Pane navigation
+nnoremap <A-h> <C-w>h
+nnoremap <A-l> <C-w>l
+nnoremap <A-k> <C-w>k
+nnoremap <A-j> <C-w>j
+
+" Easy visual indentation
+vnoremap < <gv
+vnoremap > >gv
+
+" Comment lines
+map <leader>c <action>(CommentByLineComment)
+
+" Open NERDTree (use q to exit)
+map <leader>x :NERDTreeToggle<CR>
+
+
+if has('ide')
+
+  set showmode
+  set showcmd
+  set clipboard+=unnamed
+  " mappings and options that exist only in IdeaVim
+  map <leader>? <Action>(RecentFiles)
+  map <leader><space> <Action>(Switcher)
+  map <leader>sf <Action>(GotoFile)
+  map <leader>sg <Action>(FindInPath)
+
+  map <leader>b <Action>(Switcher)
+
+  map gd <Action>(QuickTypeDefinition)
+  map gD <Action>(GotoDeclaration)
+
+
+  " Window splits
+  map <leader>wv <Action>(SplitVertically)
+  map <leader>ws <Action>(SplitHorizontally)
+  map <leader>wu <Action>(Unsplit)
+  map <leader>wm <Action>(MoveEditorToOppositeTabGroup)
+
+
+  " Display options
+  map <leader>dd <Action>(ToggleDistractionFreeMode)
+  map <leader>dz <Action>(ToggleZenMode)
+  map <leader>df <Action>(ToggleFullScreen)
+
+ " Actions
+  map <leader>am <Action>(ShowIntentionActions)
+  map <leader>as <Action>(SearchEverywhere)
+
+  " Close active tab
+  map <leader>q <Action>(CloseContent)
+
+  " Refactoring
+  map <leader>rn <Action>(RenameElement)
+  map <leader>rm <Action>(ExtractMethod)
+  map <leader>rv <Action>(IntroduceVariable)
+  map <leader>rf <Action>(IntroduceField)
+  map <leader>rs <Action>(ChangeSignature)
+  map <leader>rr <Action>(Refactorings.QuickListPopupAction)
+
+  " Go to code
+  nmap <leader>gd <Action>(GotoDeclaration)
+  nmap <leader>gy <Action>(GotoTypeDeclaration)
+  nmap <leader>gi <Action>(GotoImplementation)
+  nmap <leader>gu <Action>(ShowUsages)
+  nmap <leader>gt <Action>(GotoTest)
+  nmap <leader>gf <Action>(Back)
+  nmap <leader>gb <Action>(Forward)
+
+  " Git windows
+  map <leader>gc <Action>(CheckinProject)
+  map <leader>gs <Action>(ActivateVersionControlToolWindow)
+  map <leader>gb <Action>(Git.Branches)
+  
+  " Terminal
+  map <leader>t :shell<CR>
+  
+  if &ide =~? 'intellij idea'
+    if &ide =~? 'community'
+      " some mappings and options for IntelliJ IDEA Community Edition
+    elseif &ide =~? 'ultimate'
+      " some mappings and options for IntelliJ IDEA Ultimate Edition
+    endif
+  elseif &ide =~? 'pycharm'
+    " PyCharm specific mappings and option
+  endif
+else
+  " some mappings for Vim/Neovim
+  nnoremap <leader>sf <cmd>Telescope find_files<cr>
+endif
+
+
+
+-- @see https://github.com/ThePrimeagen/init.lua/blob/master/lua/theprimeagen/remap.lua
+
+-- recenter after moving up/down next/previous search result
+map <C-d> <C-d>zz
+map <C-u> <C-u>zz
+map n nzzzv
+map N Nzzzv
+
+
+-- greatest remap ever
+-- map "x", "<leader>p", [["_dP]])
+
+-- next greatest remap ever : asbjornHaland
+map <leader>y "+y
+map <leader>Y "+Y
+
+map <leader>d "_d
+
+
+map <leader>f <Action>(ReformatCode)
+
+map "n", "<C-k>", "<cmd>cnext<CR>zz")
+map "n", "<C-j>", "<cmd>cprev<CR>zz")
+map "n", "<leader>k", "<cmd>lnext<CR>zz")
+map "n", "<leader>j", "<cmd>lprev<CR>zz")
