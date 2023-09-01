@@ -29,7 +29,6 @@ in
     gnomeExtensions.space-bar
     gnomeExtensions.sound-output-device-chooser
     albert
-    google-cloud-sdk
     terraform
     shellcheck
     jetbrains.idea-ultimate
@@ -104,15 +103,71 @@ in
     enable = true;
     sensibleOnTop = true;
     extraConfig = ''
-      	  set -g mouse on
-      	  set -g pane-border-status top
-      	  setw -g mode-keys vi
-      	  set -g default-terminal "xterm-256-color"
-      	'';
+    set -g pane-border-status top
+    set-option -g repeat-time 200
+
+
+    # don't rename windows automatically
+    set-option -g allow-rename off
+    setw -g automatic-rename off
+    set-window-option -g automatic-rename off
+
+
+    set -g pane-border-style 'fg=#ff5f00,bg=black'
+    set -g pane-active-border-style 'fg=black,bg=#ff5f00'
+    set -g pane-border-status top
+    set -g pane-border-format " #{pane_index} #{pane_title} "
+    set-option -s set-clipboard off
+
+    set -g @prefix_highlight_fg 'black'
+    set -g @prefix_highlight_bg '#ff5f00'
+
+    set -g status-interval 10
+    set -g status on
+    set -g status-left '#[fg=#ff5f00,bg=#444444] #(bash -c "printf \"\Uf011b\"") #[fg=white]#{=7:session_name} '
+    set -g status-left-length 17
+
+
+    set -g status-right '#{?pane_synchronized, #[bg=#ff5f00]#[fg=black]Sync Panes,}'
+    set -ag status-right '#{prefix_highlight} #{window_flags}  '
+    # set -ag status-right '#[fg=#ff5f00]#{continuum_status}#[default]  '
+    set -ag status-right '#[fg=white]#(bash -c "printf \"\Uf02ca\"") #(timeout 1 df -h /root | tail -1 | awk "{ print \$3\"/\"\$2}") '
+    set -ag status-right '#[fg=white]#(bash -c "printf \"\Uf035b\"") #(timeout 1 free -mh | head -n 2 | tail -n 1 | awk "{ print \$3\"/\"\$2}" ) '
+    set -ag status-right '#[fg=white]#(timeout 1 cat /proc/loadavg | cut -f1 -d" ") '
+    set -ag status-right '#[fg=white]#(timeout 1 date +"%d-%m-%Y %H:%M") '
+    set -g status-right-length 150
+
+    set -g message-command-style 'fg=black,bg=#ff5f00'
+    set -g status-style 'fg=#ff5f00,bg=black'
+    set -g message-style 'fg=black,bg=#ff5f00'
+    set -g mode-style 'fg=black,bg=#ff5f00'
+
+
+
+    # window status
+    setw -g window-status-format         "#[bg=colour235]#[fg=white] #{window_name} "
+    setw -g window-status-current-format "#[bg=#ff5f00]#[fg=black] #{window_name} "
+
+    # Scrolling for less etc.
+    # @see https://www.reddit.com/r/tmux/comments/925w9t/how_to_scroll_the_pager_less_in_copy_mode/
+    tmux_commands_with_legacy_scroll="nano less man"
+
+    bind-key -n C-S-Left swap-window -t -1
+    bind-key -n C-S-Right swap-window -t +1
+
+
+    bind-key -n C-S-M-Up resize-pane -U 10
+    bind-key -n C-S-M-Down resize-pane -D 10
+    bind-key -n C-S-M-Left resize-pane -L 10
+    bind-key -n C-S-M-Right resize-pane -R 10
+    '';
     # Force tmux to use /tmp for sockets (WSL2 compat)
     secureSocket = false;
-    #    mouse = true;
-    # clock24 = true;
+    mouse = true;
+    clock24 = true;
+    escapeTime = 10;
+    keyMode = "vi";
+    terminal = "xterm-256color";
   };
 
   # see https://hoverbear.org/blog/declarative-gnome-configuration-in-nixos/
