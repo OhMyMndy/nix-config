@@ -79,6 +79,8 @@
   environment.systemPackages = with pkgs; [
     python311
     unstable.skaffold
+    unstable.minikube
+    file
     vscode
     git
     tig
@@ -96,7 +98,16 @@
     gnome.gnome-tweaks
     flatpak
     neovim
-    google-cloud-sdk
+    (google-cloud-sdk.withExtraComponents [
+      google-cloud-sdk.components.alpha
+      google-cloud-sdk.components.beta
+      google-cloud-sdk.components.kubectl
+      google-cloud-sdk.components.skaffold
+      google-cloud-sdk.components.minikube
+      google-cloud-sdk.components.gke-gcloud-auth-plugin
+      google-cloud-sdk.components.config-connector
+    ])
+    mariadb_1011
     terraform
     tflint
     nodePackages.nodemon
