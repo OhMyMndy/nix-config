@@ -77,7 +77,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    python311
+    (python311.withPackages(ps: with ps; [ packaging google-cloud-asset google-cloud-compute google-cloud-bigquery ]))
     unstable.skaffold
     unstable.minikube
     file
@@ -89,6 +89,11 @@
     bat
     tmux
     htop
+    iftop
+    iotop
+    glances
+    yq
+    jq
     gnumake
     curl
     wget
@@ -106,6 +111,7 @@
       google-cloud-sdk.components.minikube
       google-cloud-sdk.components.gke-gcloud-auth-plugin
       google-cloud-sdk.components.config-connector
+      google-cloud-sdk.components.cbt
     ])
     mariadb_1011
     terraform
