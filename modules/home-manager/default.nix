@@ -3,8 +3,8 @@
 let
   astroNvim = builtins.fetchGit {
     url = "https://github.com/AstroNvim/AstroNvim";
-    ref = "main"; # replace with desired branch, tag, or commit hash
-    rev = "26aedacec6a3d2aeba44c365360b3ba3637b20ca";
+    ref = "refs/tags/v3.36.9";
+    rev = "dad0bec1fef2833561d04ea446a544fbfde92539";
   };
 in
 {
@@ -42,6 +42,10 @@ in
     source = "${astroNvim}";
     recursive = true;
   };
+  home.file.".config/nvim/lua/user" = {
+    source = ./source/.nvim;
+    recursive = true;
+  };
   home.file.".ideavimrc".source = ./source/.ideavimrc;
 
   # config.lib.file.mkOutOfStoreSymlink 
@@ -54,7 +58,6 @@ in
       plugins = [
         "git"
         "terraform"
-        "tmux"
         "fzf"
         "gcloud"
         "thefuck"
@@ -86,6 +89,7 @@ in
       vimPlugins.nvim-treesitter-textobjects
       vimPlugins.nvim-treesitter-refactor
       vimPlugins.telescope-nvim
+      # vimPlugins.telescope-fzf-native-nvim
 
       vimPlugins.tokyonight-nvim
 

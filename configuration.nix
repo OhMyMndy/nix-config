@@ -103,6 +103,13 @@
     gnome.gnome-tweaks
     flatpak
     neovim
+    gnumake
+    cmake # to build nvim fzf-native
+    gcc
+    go
+    nodejs_20
+    rustc
+    cargo
     (google-cloud-sdk.withExtraComponents [
       google-cloud-sdk.components.alpha
       google-cloud-sdk.components.beta
