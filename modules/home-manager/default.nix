@@ -30,6 +30,7 @@ in
     gnomeExtensions.sound-output-device-chooser
     albert
     terraform
+    terraform-docs
     shellcheck
     jetbrains.idea-ultimate
     jetbrains.phpstorm
@@ -70,11 +71,12 @@ in
 
     };
     initExtra = ''
-      bindkey  "^[[H"   beginning-of-line
-      bindkey  "^[[F"   end-of-line
-      
-      export MANPAGER='nvim +Man!' 
-      export PAGER='nvim +Man!'
+      # see: https://stackoverflow.com/questions/18600188/home-end-keys-do-not-work-in-tmux
+      bindkey  "^[OH"   beginning-of-line
+      bindkey  "^[OF"   end-of-line
+
+      bindkey  "^[[1~"   beginning-of-line
+      bindkey  "^[[4~"   end-of-line
     '';
   };
 
@@ -105,65 +107,144 @@ in
   };
   programs.tmux = {
     enable = true;
+    plugins = with pkgs.tmuxPlugins; [
+      # vim-tmux-navigator
+      # sensible
+      {
+        plugin = yank;
+        extraConfig = ''
+          set -g @yank_with_mouse off # or 'on'
+          set -g @yank_action 'copy-pipe' # or 'copy-pipe-and-cancel' for the default
+
+        '';
+      }
+      {
+        plugin = tmux-thumbs;
+        extraConfig = ''
+          set -g @thumbs-command 'echo -n {} | (wl-copy || xsel -i --clipboard || xclip -selection clipboard || pbcopy || putclip || cat | clip.exe )'
+        '';
+      }
+
+      {
+        plugin = prefix-highlight;
+
+        extraConfig = ''
+          set -g @prefix_highlight_fg 'black'
+          set -g @prefix_highlight_bg '#ff5f00'
+        '';
+      }
+      {
+        plugin = resurrect; # Used by tmux-continuum
+
+        # Use XDG data directory
+        # https://github.com/tmux-plugins/tmux-resurrect/issues/348
+        extraConfig = ''
+          set -g @resurrect-dir '$HOME/.cache/tmux/resurrect'
+          set -g @resurrect-capture-pane-contents 'on'
+          set -g @resurrect-pane-contents-area 'visible'
+        '';
+      }
+      {
+        plugin = continuum;
+        extraConfig = ''
+          set -g @continuum-restore 'on'
+          set -g @continuum-save-interval '5' # minutes
+        '';
+      }
+    ];
     sensibleOnTop = true;
     extraConfig = ''
-    set -g pane-border-status top
-    set-option -g repeat-time 200
+      setw -g mode-keys vi
+
+      set -g pane-border-status top
+      set-option -g repeat-time 200
+
+      # Start windows and panes index at 1, not 0.
+      set -g base-index 1
+      setw -g pane-base-index 1
+
+      # Ensure window index numbers get reordered on delete.
+      set-option -g renumber-windows on
+
+      # don't rename windows automatically
+      set-option -g allow-rename off
+      setw -g automatic-rename off
+      set-window-option -g automatic-rename off
 
 
-    # don't rename windows automatically
-    set-option -g allow-rename off
-    setw -g automatic-rename off
-    set-window-option -g automatic-rename off
+      set -g pane-border-style 'fg=#ff5f00,bg=black'
+      set -g pane-active-border-style 'fg=black,bg=#ff5f00'
+      set -g pane-border-status top
+      set -g pane-border-format " #{pane_index} #{pane_title} "
+      set-option -s set-clipboard on
+
+      set -g @prefix_highlight_fg 'black'
+      set -g @prefix_highlight_bg '#ff5f00'
+
+      set -g status-interval 10
+      set -g status on
+      set -g status-left '#[fg=#ff5f00,bg=#444444] #(bash -c "printf \"\Uf011b\"") #[fg=white]#{=7:session_name} '
+      set -g status-left-length 17
 
 
-    set -g pane-border-style 'fg=#ff5f00,bg=black'
-    set -g pane-active-border-style 'fg=black,bg=#ff5f00'
-    set -g pane-border-status top
-    set -g pane-border-format " #{pane_index} #{pane_title} "
-    set-option -s set-clipboard off
+      set -g status-right '#{?pane_synchronized, #[bg=#ff5f00]#[fg=black]Sync Panes,}'
+      set -ag status-right '#{prefix_highlight} #{window_flags}  '
+      # set -ag status-right '#[fg=#ff5f00]#{continuum_status}#[default]  '
+      set -ag status-right '#[fg=white]#(bash -c "printf \"\Uf02ca\"") #(timeout 1 df -h /root | tail -1 | awk "{ print \$3\"/\"\$2}") '
+      set -ag status-right '#[fg=white]#(bash -c "printf \"\Uf035b\"") #(timeout 1 free -mh | head -n 2 | tail -n 1 | awk "{ print \$3\"/\"\$2}" ) '
+      set -ag status-right '#[fg=white]#(timeout 1 cat /proc/loadavg | cut -f1 -d" ") '
+      set -ag status-right '#[fg=white]#(timeout 1 date +"%d-%m-%Y %H:%M") '
+      set -g status-right-length 150
 
-    set -g @prefix_highlight_fg 'black'
-    set -g @prefix_highlight_bg '#ff5f00'
+      set -g message-command-style 'fg=black,bg=#ff5f00'
+      set -g status-style 'fg=#ff5f00,bg=black'
+      set -g message-style 'fg=black,bg=#ff5f00'
+      set -g mode-style 'fg=black,bg=#ff5f00'
 
-    set -g status-interval 10
-    set -g status on
-    set -g status-left '#[fg=#ff5f00,bg=#444444] #(bash -c "printf \"\Uf011b\"") #[fg=white]#{=7:session_name} '
-    set -g status-left-length 17
-
-
-    set -g status-right '#{?pane_synchronized, #[bg=#ff5f00]#[fg=black]Sync Panes,}'
-    set -ag status-right '#{prefix_highlight} #{window_flags}  '
-    # set -ag status-right '#[fg=#ff5f00]#{continuum_status}#[default]  '
-    set -ag status-right '#[fg=white]#(bash -c "printf \"\Uf02ca\"") #(timeout 1 df -h /root | tail -1 | awk "{ print \$3\"/\"\$2}") '
-    set -ag status-right '#[fg=white]#(bash -c "printf \"\Uf035b\"") #(timeout 1 free -mh | head -n 2 | tail -n 1 | awk "{ print \$3\"/\"\$2}" ) '
-    set -ag status-right '#[fg=white]#(timeout 1 cat /proc/loadavg | cut -f1 -d" ") '
-    set -ag status-right '#[fg=white]#(timeout 1 date +"%d-%m-%Y %H:%M") '
-    set -g status-right-length 150
-
-    set -g message-command-style 'fg=black,bg=#ff5f00'
-    set -g status-style 'fg=#ff5f00,bg=black'
-    set -g message-style 'fg=black,bg=#ff5f00'
-    set -g mode-style 'fg=black,bg=#ff5f00'
+      # synchronize panes
+      bind-key C-x set-window-option synchronize-panes\; display-message "synchronize-panes is now #{?pane_synchronized,on,off}"
 
 
+      # history
+      set-option -g history-limit 20000
 
-    # window status
-    setw -g window-status-format         "#[bg=colour235]#[fg=white] #{window_name} "
-    setw -g window-status-current-format "#[bg=#ff5f00]#[fg=black] #{window_name} "
+      # window status
+      setw -g window-status-format         "#[bg=colour235]#[fg=white] #{window_index} #{window_name} "
+      setw -g window-status-current-format "#[bg=#ff5f00]#[fg=black] #{window_index} #{window_name} "
 
-    # Scrolling for less etc.
-    # @see https://www.reddit.com/r/tmux/comments/925w9t/how_to_scroll_the_pager_less_in_copy_mode/
-    tmux_commands_with_legacy_scroll="nano less man"
+      # Scrolling for less etc.
+      # @see https://www.reddit.com/r/tmux/comments/925w9t/how_to_scroll_the_pager_less_in_copy_mode/
+      tmux_commands_with_legacy_scroll="nano less man bat"
 
-    bind-key -n C-S-Left swap-window -t -1
-    bind-key -n C-S-Right swap-window -t +1
+      # Sane scrolling
+
+      set -g @scroll-in-moused-over-pane "on"
+      set -g @scroll-down-exit-copy-mode "on"
+      set -g @scroll-speed-num-lines-per-scroll 3
+      set -g @emulate-scroll-for-no-mouse-alternate-buffer 'on'
 
 
-    bind-key -n C-S-M-Up resize-pane -U 10
-    bind-key -n C-S-M-Down resize-pane -D 10
-    bind-key -n C-S-M-Left resize-pane -L 10
-    bind-key -n C-S-M-Right resize-pane -R 10
+      bind-key -n C-S-Left swap-window -t -1\; select-window -t -1
+      bind-key -n C-S-Right swap-window -t +1\; select-window -t +1
+
+      bind-key -n C-S-M-Up resize-pane -U 10
+      bind-key -n C-S-M-Down resize-pane -D 10
+      bind-key -n C-S-M-Left resize-pane -L 10
+      bind-key -n C-S-M-Right resize-pane -R 10
+
+
+      
+      unbind C-PageUp
+      unbind C-PageDown
+      # https://github.com/tmux/tmux/issues/140#issuecomment-302742783
+      # 2.4+
+      unbind -T copy-mode MouseDragEnd1Pane
+      # 2.5+
+      unbind -T copy-mode-vi MouseDragEnd1Pane
+      
+      # home/end
+      bind-key -n Home send Escape "OH"
+      bind-key -n End send Escape "OF"
     '';
     # Force tmux to use /tmp for sockets (WSL2 compat)
     secureSocket = false;
@@ -171,7 +252,7 @@ in
     clock24 = true;
     escapeTime = 10;
     keyMode = "vi";
-    terminal = "xterm-256color";
+    terminal = "tmux-256color";
   };
 
   # see https://hoverbear.org/blog/declarative-gnome-configuration-in-nixos/

@@ -49,6 +49,18 @@
 
   environment.systemPackages = with pkgs; [
     microsoft-edge
+    # xrdp
   ];
+
+  # networking.firewall.allowedTCPPorts = [
+  #   3389
+  # ];
+  # networking.firewall.allowedUDPPorts = [
+  #   3389
+  # ];
+  # services.xrdp = {
+  #   enable = true;
+  #   openFirewall = true;
+  # };
 
 }

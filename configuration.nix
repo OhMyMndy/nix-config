@@ -77,7 +77,8 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    (python311.withPackages(ps: with ps; [ packaging google-cloud-asset google-cloud-compute google-cloud-bigquery ]))
+    (python311.withPackages (ps: with ps; [ flask virtualenv packaging google-cloud-asset google-cloud-compute google-cloud-bigquery pip ]))
+    pdm
     unstable.skaffold
     unstable.minikube
     file
@@ -87,7 +88,16 @@
     difftastic
     unzip
     bat
+    bat-extras.batgrep
+    bat-extras.batpipe
+    bat-extras.batman
+    bat-extras.batdiff
+    bat-extras.prettybat
     tmux
+    xsel
+    xclip
+    wl-clipboard
+    nvimpager
     htop
     iftop
     iotop
@@ -104,6 +114,7 @@
     flatpak
     neovim
     gnumake
+    time
     cmake # to build nvim fzf-native
     gcc
     go
@@ -122,15 +133,22 @@
     ])
     mariadb_1011
     terraform
+    terraform-docs
+    terragrunt
     tflint
     nodePackages.nodemon
     shellcheck
     mutagen
     mutagen-compose
     docker-compose
+    distrobox
+    gitkraken
     skopeo
 
     steampipe
+
+
+    unstable.obsidian
   ];
 
   # virtualisation.podman = {
@@ -151,7 +169,9 @@
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+  };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
