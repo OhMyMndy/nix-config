@@ -84,8 +84,10 @@
     file
     vscode
     git
+    gh
     tig
     difftastic
+    just
     unzip
     bat
     bat-extras.batgrep
@@ -195,5 +197,12 @@
       cores = 2;
     };
   };
+  security.pam.loginLimits = [
+    { domain = "*"; item = "core"; type = "hard"; value = "0"; }
+  ];
+
+  systemd.coredump.extraConfig = ''
+    Storage=none
+  '';
 
 }

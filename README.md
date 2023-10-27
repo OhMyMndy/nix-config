@@ -29,3 +29,8 @@ time nix flake update .
 ```bash
 nixpkgs-fmt .
 ```
+
+## Delete older revisions
+```bash
+nix-collect-garbage --delete-older-than 30d --dry-run
+```
