@@ -2,9 +2,9 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
-    home-manager.url = "github:nix-community/home-manager/release-23.05";
+    home-manager.url = "github:nix-community/home-manager/release-23.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
@@ -31,7 +31,7 @@
             ({ config, pkgs, ... }: { nixpkgs.overlays = [ overlay-unstable ]; })
             ./configuration.nix
             ./modules/gnome
-            ./hosts/work-1.nix
+            ./hosts/work-1
 
             # make home-manager as a module of nixos
             # so that home-manager configuration will be deployed automatically when executing `nixos-rebuild switch`
@@ -49,12 +49,15 @@
             }
           ];
         };
-        gce = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
+    
+        homelab-1 = nixpkgs.lib.nixosSystem {
+          inherit system;
           modules = [
+            # Overlays-module makes "pkgs.unstable" available in configuration.nix
+            ({ config, pkgs, ... }: { nixpkgs.overlays = [ overlay-unstable ]; })
             ./configuration.nix
             ./modules/gnome
-            ./modules/headless-gui
+            ./hosts/homelab-1
 
             # make home-manager as a module of nixos
             # so that home-manager configuration will be deployed automatically when executing `nixos-rebuild switch`
@@ -63,9 +66,9 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
 
-              home-manager.users.mschoep = import ./modules/home-manager;
+              home-manager.users.mandy = import ./hosts/homelab-1/home-manager;
               home-manager.extraSpecialArgs = {
-                username = "mschoep";
+                username = "mandy";
               };
               # Optionally, use home-manager.extraSpecialArgs to pass
               # arguments to home.nix
@@ -75,3 +78,4 @@
       };
     };
 }
+

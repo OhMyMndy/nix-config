@@ -45,22 +45,6 @@
   networking.useDHCP = lib.mkDefault true;
   # networking.interfaces.ens33.useDHCP = lib.mkDefault true;
 
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 
-  environment.systemPackages = with pkgs; [
-    microsoft-edge
-    # xrdp
-  ];
-
-  # networking.firewall.allowedTCPPorts = [
-  #   3389
-  # ];
-  # networking.firewall.allowedUDPPorts = [
-  #   3389
-  # ];
-  # services.xrdp = {
-  #   enable = true;
-  #   openFirewall = true;
-  # };
-
+  virtualisation.vmware.guest.enable = true;
 }

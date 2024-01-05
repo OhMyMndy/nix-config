@@ -5,9 +5,18 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
+  services.openssh = {
+    openFirewall = true;
+    enable = true;
+    settings = {
+      X11Forwarding = true;
+    };
+  };
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
+  services.gnome.gnome-keyring.enable = true;
+
   environment.gnome.excludePackages = (with pkgs; [
     gnome-photos
     gnome-tour
@@ -54,4 +63,9 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
+
+  environment.systemPackages = with pkgs; [
+    gnome.gnome-tweaks
+    xpra
+  ];
 }

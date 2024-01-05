@@ -55,17 +55,6 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.mschoep = {
-    isNormalUser = true;
-    description = "mschoep";
-    shell = pkgs.zsh;
-    initialPassword = "123";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
-    packages = with pkgs; [
-      firefox
-    ];
-  };
   programs.zsh.enable = true;
 
   virtualisation.docker.enable = true;
@@ -77,7 +66,8 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    (python311.withPackages (ps: with ps; [ flask virtualenv packaging google-cloud-asset google-cloud-compute google-cloud-bigquery pip ]))
+    # Not compatible with pyarrow13 yet: google-cloud-asset google-cloud-compute google-cloud-bigquery 
+    (python311.withPackages (ps: with ps; [ flask virtualenv packaging pip ]))
     pdm
     unstable.skaffold
     unstable.minikube
@@ -112,7 +102,6 @@
     direnv
     fzf
     sops
-    gnome.gnome-tweaks
     flatpak
     neovim
     gnumake
@@ -150,7 +139,7 @@
     steampipe
 
 
-    unstable.obsidian
+    # unstable.obsidian
   ];
 
   # virtualisation.podman = {
@@ -159,7 +148,7 @@
   #   enable = true;
   # };
 
-  virtualisation.vmware.guest.enable = true;
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
