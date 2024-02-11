@@ -49,7 +49,7 @@
             }
           ];
         };
-    
+
         homelab-1 = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [

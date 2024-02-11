@@ -8,7 +8,11 @@ update:
     time nix flake update .
 
 clean:
-    time nix-collect-garbage --delete-older-than 30d --dry-run
+    # --dry-run
+    time sudo nix-collect-garbage --delete-older-than 30d
 
 switch:
     time sudo nixos-rebuild switch --flake .
+
+format:
+    nixpkgs-fmt .
