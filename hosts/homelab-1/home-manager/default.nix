@@ -3,7 +3,7 @@
 {
   imports =
     [
-        ../../../modules/home-manager
+      ../../../modules/home-manager
     ];
 
   systemd.user.services.mutagen-daemon = {

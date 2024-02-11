@@ -7,7 +7,7 @@
     description = "Mandy";
     shell = pkgs.zsh;
     initialPassword = "123";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" "libvirtd" ];
     packages = with pkgs; [
     ];
   };
@@ -23,7 +23,16 @@
     pkgs.argocd
     pkgs.youtube-dl
     pkgs.yt-dlp
+    pkgs.quickemu
+    pkgs.virt-manager
+    pkgs.virt-viewer
   ];
+
+  # sudo virsh net-autostart default  
+  programs.virt-manager = {
+    enable = true;
+  };
+  virtualisation.libvirtd.enable = true;
   services.tailscale.enable = true;
   networking.firewall = {
     enable = true;
@@ -50,7 +59,7 @@
   };
 
   services.k3s = {
-    enable = true;
+    enable = false;
     package = pkgs.unstable.k3s_1_28;
     extraFlags = "--write-kubeconfig-mode 644";
   };

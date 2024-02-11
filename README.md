@@ -1,7 +1,6 @@
 # nix-config
+
 OhMyMndy's Nix (OS) configs!
-
-
 
 ## Use on a already configured machine
 
@@ -12,25 +11,23 @@ sudo nixos-rebuild switch --flake .
 ## Test new configuration in VM
 
 ```bash
-sudo nixos-rebuild build --flake .
-sudo rm -rf *.qcow2
-sudo nixos-rebuild build-vm --flake .
+just vm
 ```
 
-
 ## Update flake
+
 ```bash
-nix flake lock --update-input nixpkgs .
-time nix flake update .
+just update
 ```
 
 ## Reformat all .nix files
 
 ```bash
-nixpkgs-fmt .
+just format
 ```
 
 ## Delete older revisions
+
 ```bash
-nix-collect-garbage --delete-older-than 30d --dry-run
+just clean
 ```

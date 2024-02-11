@@ -5,7 +5,9 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
+      ../../modules/audio/audio.nix
     ];
 
 
@@ -18,22 +20,25 @@
 
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
+  boot.kernelModules = [ "vfio_virqfd" "vfio_pci" "vfio_iommu_type1" "vfio" "kvm-amd" ];
+
+  boot.kernelParams = [ "amd_iommu=pt" ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/0562ef1a-91df-4876-a0f8-f95faec123d3";
+    {
+      device = "/dev/disk/by-uuid/0562ef1a-91df-4876-a0f8-f95faec123d3";
       fsType = "ext4";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/F852-38D7";
+    {
+      device = "/dev/disk/by-uuid/F852-38D7";
       fsType = "vfat";
     };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/244c7c59-e9ed-450a-ab9b-79b8716d1442"; }
-    ];
+    [{ device = "/dev/disk/by-uuid/244c7c59-e9ed-450a-ab9b-79b8716d1442"; }];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
