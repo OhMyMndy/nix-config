@@ -33,7 +33,6 @@ in
     terraform-docs
     shellcheck
     jetbrains.idea-ultimate
-    jetbrains.phpstorm
 
     buildpack
     (pkgs.nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
