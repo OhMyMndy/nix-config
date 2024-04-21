@@ -16,3 +16,7 @@ switch:
 
 format:
     nixpkgs-fmt .
+
+garbage:
+    time nix-env --delete-generations 14d
+    time nix-store --gc
