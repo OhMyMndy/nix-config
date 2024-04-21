@@ -137,7 +137,7 @@
     skopeo
 
     steampipe
-
+    lm_sensors
 
     # unstable.obsidian
   ];
