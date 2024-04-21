@@ -19,6 +19,7 @@
     pkgs.neovim
     pkgs.vscode
     pkgs.google-chrome
+    pkgs.firefox
     pkgs.tailscale
     pkgs.argocd
     pkgs.youtube-dl
@@ -63,6 +64,7 @@
     package = pkgs.unstable.k3s_1_28;
     extraFlags = "--write-kubeconfig-mode 644";
   };
+
 
   # Disable the GNOME3/GDM auto-suspend feature that cannot be disabled in GUI!
   # If no user is logged in, the machine will power down after 20 minutes.
