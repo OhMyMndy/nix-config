@@ -247,7 +247,7 @@ in
     '';
     # Force tmux to use /tmp for sockets (WSL2 compat)
     secureSocket = false;
-    mouse = true;
+    mouse = true; # set -g mouse on
     clock24 = true;
     escapeTime = 10;
     keyMode = "vi";
